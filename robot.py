@@ -2,16 +2,26 @@ import requests
 import settings
 import simplejson
 import subprocess
+import sys
+import argparse
 
-auth = (settings.username, settings.password)
-user = 'Miserlou'
-repos = 'https://api.github.com/users/' + user + '/repos'
-r = requests.get (repos, auth = auth) 
+def main():
+    parser = argparse.ArgumentParser(description='Whitespace annihilating GitHub robot.')
+    parser.add_argument('-u', '--users', help='A text file with usernames.', default='users.txt')
+    parser.add_argument('-c', '--count', help='The maximum number of total requests to make.', default=999999)
 
-if (r.status_code == 200):
-    resp = simplejson.loads (r.content) 
-    for repo in resp:
-        print "clonged"
+    args = parser.parse_args()
+    print args
+
+    auth = (settings.username, settings.password)
+    user = 'Miserlou'
+    repos = 'https://api.github.com/users/' + user + '/repos'
+    r = requests.get (repos, auth = auth) 
+
+    if (r.status_code == 200):
+        resp = simplejson.loads (r.content) 
+        for repo in resp:
+            print "clonged"
 
 def fork_repo(user, repo):
     url = 'https://api.github.com/repos/' + user + '/' + repo + '/forks'
@@ -44,7 +54,7 @@ def change_branch(repo):
     except Exception, e:
         return False
 
-def fix_repo (repo):
+#def fix_repo (repo):
     #TODO
 
 def commit_repo(repo):
@@ -69,14 +79,18 @@ def push_commit(repo):
 
 def submit_pull_request(user, repo):
     url = 'https://api.github.com/repos/' + user + '/' + repo + '/pulls'
-    params = {'title': 'Hi! We cleaned up your code for you!', 'body': 'Hi
-            there!\n\nThis is WhitespaceBot from Gun.io. I\'m a robot that
-            removes white space in your code! Blah blah blah.'}
+    params = {'title': 'Hi! We cleaned up your code for you!', 'body': 'Hi'
+            + 'there!\n\nThis is WhitespaceBot from Gun.io. I\'m a robot that'
+            + 'removes white space in your code! Blah blah blah.'}
     r = requests.post(url, auth = auth, params=params)
     if (r.status_code == 201):
         return True
     else:
 	return None
+
+if __name__ == '__main__':
+        sys.exit(main())
+
 #pseudo
 #    take name from list
 #    scan names for most names most popular repo
