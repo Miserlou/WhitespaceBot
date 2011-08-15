@@ -6,9 +6,10 @@ import sys
 import argparse
 
 def main():
-    parser = argparse.ArgumentParser(description='Whitespace annihilating GitHub robot.')
+    parser = argparse.ArgumentParser(description='Whitespace annihilating GitHub robot.\nBy Rich Jones - Gun.io - rich@gun.io')
     parser.add_argument('-u', '--users', help='A text file with usernames.', default='users.txt')
     parser.add_argument('-c', '--count', help='The maximum number of total requests to make.', default=999999)
+    parser.add_argument('-v', '--verbose', help='Make this sucker loud? (True/False)', default=True)
 
     args = parser.parse_args()
     print args
@@ -21,7 +22,7 @@ def main():
     if (r.status_code == 200):
         resp = simplejson.loads (r.content) 
         for repo in resp:
-            print "clonged"
+            r ="clonged"
 
 def fork_repo(user, repo):
     url = 'https://api.github.com/repos/' + user + '/' + repo + '/forks'
@@ -54,8 +55,10 @@ def change_branch(repo):
     except Exception, e:
         return False
 
-#def fix_repo (repo):
+def fix_repo (repo):
     #TODO
+    # sed '/^$/d' Remove blank lines
+    # sed 's/[ \t]*$//' Remove trailing whitespace
 
 def commit_repo(repo):
     try:
