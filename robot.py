@@ -5,6 +5,18 @@ import subprocess
 import sys
 import argparse
 
+#pseudo
+#    take name from list
+#    scan names for most names most popular repo
+#    fork it - POST /repos/:user/:repo/forks
+#    clone it
+#    switch branch 
+#    fix it
+#    commit it!
+#    push it
+#    submit pull req
+#    remove name from list
+
 def main():
     parser = argparse.ArgumentParser(description='Whitespace annihilating GitHub robot.\nBy Rich Jones - Gun.io - rich@gun.io')
     parser.add_argument('-u', '--users', help='A text file with usernames.', default='users.txt')
@@ -92,15 +104,3 @@ def submit_pull_request(user, repo):
 
 if __name__ == '__main__':
         sys.exit(main())
-
-#pseudo
-#    take name from list
-#    scan names for most names most popular repo
-#    fork it - POST /repos/:user/:repo/forks
-#    clone it
-#    switch branch 
-#    fix it
-#    commit it!
-#    push it
-#    submit pull req
-#    remove name from list
