@@ -47,8 +47,7 @@ def change_branch(repo):
         args =['/usr/bin/git', '--git-dir', repo + '.git', '--work-tree', repo, 'branch', 'clean']
         p = subprocess.Popen(args)
         p.wait()
-        args =['/usr/bin/git', '--git-dir', repo + '.git', '--work-tree', repo,
-                'checkout', 'clean']
+        args =['/usr/bin/git', '--git-dir', repo + '.git', '--work-tree', repo, 'checkout', 'clean']
         p = subprocess.Popen(args)
         p.wait()
         return True
@@ -56,6 +55,7 @@ def change_branch(repo):
         return False
 
 def fix_repo (repo):
+    return True
     #TODO
     # sed '/^$/d' Remove blank lines
     # sed 's/[ \t]*$//' Remove trailing whitespace
@@ -72,8 +72,7 @@ def commit_repo(repo):
 
 def push_commit(repo):
     try:
-        args =['/usr/bin/git', '--git-dir', repo + '.git', '--work-tree',
-                'repo', 'push', 'origin', 'clean'] 
+        args =['/usr/bin/git', '--git-dir', repo + '.git', '--work-tree', 'repo', 'push', 'origin', 'clean'] 
         p = subprocess.Popen(args) 
         p.wait ()
         return True
