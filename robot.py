@@ -8,6 +8,9 @@ import time
 from random import choice
 import os
 from os.path import join
+import shutil
+import urllib2
+import json
 
 #pseudo
 #    take name from list
@@ -74,6 +77,10 @@ def main():
         commited = commit_repo(repo)
         print "Pushing.."
         pushed = push_commit(repo)
+        print "Submitting pull request.."
+        submitted = submit_pull_request(user, repo)
+        print "Delting local repo.."
+        deleted = delete_local_repo(repo)
 
 def load_user_list(old_users):
     text_file = open(old_users, "r")
@@ -97,7 +104,7 @@ def fork_repo(user, repo):
     r = requests.post (url, auth=auth)
     if (r.status_code == 201):
         resp = simplejson.loads(r.content)
-        return resp['clone_url']
+        return resp['ssh_url']
     else:
         return None
 
@@ -133,6 +140,8 @@ def fix_repo (repo):
     for root, dirs, files in os.walk(repo):
        for f in files:
         path = os.path.join(root, f)
+        if '.git' in path:
+            continue
         p = subprocess.Popen(['file','-bi',path],stdout=subprocess.PIPE)
 
         while True:
@@ -145,14 +154,11 @@ def fix_repo (repo):
                 q = subprocess.Popen(['sed','-i','s/[ \\t]*$//', path])
                 q.wait()
                 args =['/usr/bin/git', '--git-dir', gitdir, '--work-tree', repo, 'add', path]
-                p = subprocess.Popen(args) 
-                p.wait()
-                print "True"
-            else:
-                print "False"
+                pee = subprocess.Popen(args) 
+                pee.wait()
             if o == '' and p.poll() != None: break
 
-    git_ignore = os.path.join(repo, '.gitignore') 
+    git_ignore = os.path.join(repo, '.gitignore')
     if not os.path.exists(git_ignore):
         ignorefile = open(git_ignore, 'w')
         ignore = '# Compiled source #\n' + \
@@ -185,9 +191,6 @@ def fix_repo (repo):
             return False
 
     return True
-    #TODO
-    # sed '/^$/d' Remove blank lines
-    # sed 's/[ \t]*$//' Remove trailing whitespace
 
 def commit_repo(repo):
     gitdir = os.path.join(settings.pwd, repo, ".git")
@@ -200,6 +203,7 @@ def commit_repo(repo):
         p.wait()
         return True 
     except Exception, e:
+        print e
         return False 
 
 def push_commit(repo):
@@ -211,19 +215,44 @@ def push_commit(repo):
         p.wait ()
         return True
     except Exception, e:
-        return False
+    	print e
+	return False
+
+def basic_authorization(user, password):
+    s = user + ":" + password
+    return "Basic " + s.encode("base64").rstrip()
 
 def submit_pull_request(user, repo):
     auth = (settings.username, settings.password)
     url = 'https://api.github.com/repos/' + user + '/' + repo + '/pulls'
     params = {'title': 'Hi! We cleaned up your code for you!', 'body': 'Hi'
-            + 'there!\n\nThis is WhitespaceBot from Gun.io. I\'m a robot that'
-            + 'removes white space in your code! [Gun.io](http://gun.io).'}
-    r = requests.post(url, auth = auth, params=params)
-    if (r.status_code == 201):
-        return True
-    else:
-	return None
+            + ' there!\n\nThis is WhitespaceBot from [Gun.io](http://gun.io). I\'m an open-source robot that'
+            + ' removes trailing white space in your code, and gives you a gitignore file if you didn\'t have one! '+
+            'I\'ve only cleaned your most popular project, and I\'ve added you to a list of users not to contact ' +
+            'again, so you won\'t get any more pull requests from me unless you ask. If I\'m misbehaving, please email my ' +
+            'owner and tell him to turn me off!\n== About Gun.io ==\n[Gun.io](Gun.io) is a place for hackers to hire ' +
+            'each other for small tasks. We offer no-hassle, winner-take-all freelance gigs, by hackers, for hackers. Got ' +
+            'a bug you can\'t fix or a project you can finish on your own? Post a gig and have somebody else sort it out for you. Oh, and it\'s free for open ' +
+            'source!\n== About WhitespaceBot ==\nWhitespaceBot is a simple open source robot which uses GitHub\'s API as
+            a way of cleaning up open source projects! XXX ADD GUNIO GIG HERE', 'base': 'master', 'head': 'GunioRobot:clean'}
+
+    req = urllib2.Request(url,
+        headers = {
+            "Authorization": basic_authorization(settings.username, settings.password),
+            "Content-Type": "application/json",
+            "Accept": "*/*",   
+            "User-Agent": "WhitespaceRobot/Gunio", 
+        }, data = json.dumps(params))
+    f = urllib2.urlopen(req)
+    return True
+
+def delete_local_repo(repo):
+    repo = os.path.join(settings.pwd, repo)
+    try:
+        shutil.rmtree(repo)
+	    return True
+    except Exception, e:
+	    return False
 
 if __name__ == '__main__':
         sys.exit(main())
