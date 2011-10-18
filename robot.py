@@ -215,8 +215,8 @@ def push_commit(repo):
         p.wait ()
         return True
     except Exception, e:
-    	print e
-	return False
+        print e
+    return False
 
 def basic_authorization(user, password):
     s = user + ":" + password
@@ -250,9 +250,9 @@ def delete_local_repo(repo):
     repo = os.path.join(settings.pwd, repo)
     try:
         shutil.rmtree(repo)
-	    return True
+        return True
     except Exception, e:
-	    return False
+        return False
 
 if __name__ == '__main__':
         sys.exit(main())
