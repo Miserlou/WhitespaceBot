@@ -38,12 +38,17 @@ def main():
     old_users = load_user_list(old_users_file)
 
     users = args.users
+    new_users = load_user_list(users)
     user = get_user(users)
 
     #XXX: Potential deal breaker in here!
+    count = 0
     while user in old_users:
         print "We've already done that user!"
         user = get_user(users)
+    count = count + 1
+    if count > len(new_users):
+        return
 
     repos = 'https://api.github.com/users/' + user + '/repos'
     r = requests.get (repos, auth = auth) 
@@ -51,13 +56,13 @@ def main():
     if (r.status_code == 200):
         resp = simplejson.loads (r.content) 
         topwatch = 0
-        top_repo = None
-        top_repo = None
+        top_repo = '' 
         for repo in resp:
             if repo['watchers'] > topwatch:
                 top_repo = repo['name']
                 topwatch = repo['watchers']
-
+        print dir(repo)
+    
         print user + "'s most watched repo is " + top_repo + " with " + str(topwatch) + " watchers. Forking."
 
         repo = top_repo
@@ -81,6 +86,13 @@ def main():
         submitted = submit_pull_request(user, repo)
         print "Delting local repo.."
         deleted = delete_local_repo(repo)
+        print "Olding user.."
+        old = save_user(old_users_file, user)
+
+def save_user(old_users_file, user):
+    with open(old_users_file, "a") as id_file:
+        id_file.write(user + '\n')
+    return True
 
 def load_user_list(old_users):
     text_file = open(old_users, "r")
@@ -230,11 +242,13 @@ def submit_pull_request(user, repo):
             + ' removes trailing white space in your code, and gives you a gitignore file if you didn\'t have one! '+
             'I\'ve only cleaned your most popular project, and I\'ve added you to a list of users not to contact ' +
             'again, so you won\'t get any more pull requests from me unless you ask. If I\'m misbehaving, please email my ' +
-            'owner and tell him to turn me off!\n== About Gun.io ==\n[Gun.io](Gun.io) is a place for hackers to hire ' +
+            'owner and tell him to turn me off!\n\n== About Gun.io ==\n[Gun.io](http://Gun.io) is a place for hackers to hire ' +
             'each other for small tasks. We offer no-hassle, winner-take-all freelance gigs, by hackers, for hackers. Got ' +
-            'a bug you can\'t fix or a project you can finish on your own? Post a gig and have somebody else sort it out for you. Oh, and it\'s free for open ' +
-            'source!\n== About WhitespaceBot ==\nWhitespaceBot is a simple open source robot which uses GitHub\'s API as
-            a way of cleaning up open source projects! XXX ADD GUNIO GIG HERE', 'base': 'master', 'head': 'GunioRobot:clean'}
+            'a bug you can\'t fix or a feature you want for your project? Post a gig and have somebody else sort it out for you. Oh, and it\'s free for open ' +
+            'source! Sign up and get notified about new gigs you can work on!\n\n== About WhitespaceBot==\nWhitespaceBot ' +
+            'is a simple open source robot which uses GitHub\'s API as a way of cleaning up open source projects! We\'ve ' +
+            'put up a [paid bounty](http://gun.io/open/12/add-security-flaw-fixing-features-to-whitespacebot) for whoever can add ' +
+            'security fixing features to it.', 'base': 'master', 'head': 'GunioRobot:clean'}
 
     req = urllib2.Request(url,
         headers = {
@@ -256,3 +270,4 @@ def delete_local_repo(repo):
 
 if __name__ == '__main__':
         sys.exit(main())
+
