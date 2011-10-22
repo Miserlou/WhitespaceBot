@@ -155,7 +155,7 @@ def fix_repo (repo):
 
         # gotta be a way more pythonic way of doing this
         banned = ['.git', '.py', '.yaml', '.patch', '.hs', '.occ']
-        cont = True
+        cont = False 
         for b in banned:
             if c in path:
                cont = True
