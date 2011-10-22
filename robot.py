@@ -62,7 +62,7 @@ def main():
                 top_repo = repo['name']
                 topwatch = repo['watchers']
         print dir(repo)
-    
+
         print user + "'s most watched repo is " + top_repo + " with " + str(topwatch) + " watchers. Forking."
 
         repo = top_repo
@@ -152,8 +152,16 @@ def fix_repo (repo):
     for root, dirs, files in os.walk(repo):
        for f in files:
         path = os.path.join(root, f)
-        if '.git' in path:
+
+        # gotta be a way more pythonic way of doing this
+        banned = ['.git', '.py', '.yaml', '.patch', '.hs', '.occ']
+        cont = True
+        for b in banned:
+            if c in path:
+               cont = True
+        if cont:
             continue
+
         p = subprocess.Popen(['file','-bi',path],stdout=subprocess.PIPE)
 
         while True:
@@ -237,18 +245,22 @@ def basic_authorization(user, password):
 def submit_pull_request(user, repo):
     auth = (settings.username, settings.password)
     url = 'https://api.github.com/repos/' + user + '/' + repo + '/pulls'
-    params = {'title': 'Hi! We cleaned up your code for you!', 'body': 'Hi'
-            + ' there!\n\nThis is WhitespaceBot from [Gun.io](http://gun.io). I\'m an open-source robot that'
+    params = {'title': 'Hi! I cleaned up your code for you!', 'body': 'Hi'
+            + ' there!\n\nThis is WhitespaceBot. I\'m an open-source robot that'
             + ' removes trailing white space in your code, and gives you a gitignore file if you didn\'t have one! '+
-            'I\'ve only cleaned your most popular project, and I\'ve added you to a list of users not to contact ' +
+            ' Why whitespace? Whitespace is an eyesore for developers who use text editors with dark themes. It\'s not ' +
+            ' a huge deal, but it\'s a bit annoying if you use Vim in a terminal. Really, I\'m just a proof of ' +
+            ' concept - GitHub\'s V3 API allows robots to automatically improve open source project, and that\'s really' +
+            ' cool. Hopefully, somebody, maybe you!, will fork me and make me even more useful. My owner is '+
+            '[funding a bounty](http://gun.io/open/12/add-security-flaw-fixing-features-to-whitespacebot) to anybody ' +
+            'who can add security fixing features to me. ' +
+            '\nI\'ve only cleaned your most popular project, and I\'ve added you to a list of users not to contact ' +
             'again, so you won\'t get any more pull requests from me unless you ask. If I\'m misbehaving, please email my ' +
             'owner and tell him to turn me off!\n\n== About Gun.io ==\n[Gun.io](http://Gun.io) is a place for hackers to hire ' +
             'each other for small tasks. We offer no-hassle, winner-take-all freelance gigs, by hackers, for hackers. Got ' +
             'a bug you can\'t fix or a feature you want for your project? Post a gig and have somebody else sort it out for you. Oh, and it\'s free for open ' +
-            'source! Sign up and get notified about new gigs you can work on!\n\n== About WhitespaceBot==\nWhitespaceBot ' +
-            'is a simple open source robot which uses GitHub\'s API as a way of cleaning up open source projects! We\'ve ' +
-            'put up a [paid bounty](http://gun.io/open/12/add-security-flaw-fixing-features-to-whitespacebot) for whoever can add ' +
-            'security fixing features to it.', 'base': 'master', 'head': 'GunioRobot:clean'}
+            'source! Sign up and get notified about new gigs you can work on!\n\n',
+            'base': 'master', 'head': 'GunioRobot:clean'}
 
     req = urllib2.Request(url,
         headers = {
