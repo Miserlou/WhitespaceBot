@@ -161,7 +161,7 @@ def fix_repo(repo):
             path = os.path.join(root, f)
 
             # gotta be a way more pythonic way of doing this
-            banned = ['.git', '.py', '.yaml', '.patch', '.hs', '.occ']
+            banned = ['.git', '.py', '.yaml', '.patch', '.hs', '.occ', '.md']
             cont = False
             for b in banned:
                 if b in path:
