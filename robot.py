@@ -189,16 +189,16 @@ def fix_repo(repo):
     if not os.path.exists(git_ignore):
         ignorefile = open(git_ignore, 'w')
         ignore = '# Compiled source #\n' + \
-            ''###################\n' + \
-            ''*.com\n' + \
-            ''*.class\n' + \
-            ''*.dll\n' + \
-            ''*.exe\n' + \
-            ''*.o\n' + \
-            ''*.so\n' + \
-            ''*.pyc\n\n' + \
+            '###################\n' + \
+            '*.com\n' + \
+            '*.class\n' + \
+            '*.dll\n' + \
+            '*.exe\n' + \
+            '*.o\n' + \
+            '*.so\n' + \
+            '*.pyc\n\n' + \
             '# Numerous always-ignore extensions\n' + \
-            ''###################\n' + \
+            '###################\n' + \
             '*.diff\n' + \
             '*.err\n' + \
             '*.orig\n' + \
@@ -210,12 +210,12 @@ def fix_repo(repo):
             '*~\n\n' + \
             '*.sass-cache\n' + \
             '# Folders to ignore\n' + \
-            ''###################\n' + \
+            '###################\n' + \
             '.hg\n' + \
             '.svn\n' + \
             '.CVS\n' +
             '# OS or Editor folders\n' + \
-            ''###################\n' + \
+            '###################\n' + \
             '.DS_Store\n' + \
             'Icon?\n' + \
             'Thumbs.db\n' + \
@@ -229,11 +229,11 @@ def fix_repo(repo):
             '*.sublime-project\n' + \
             '*.sublime-workspace\n' + \
             '# Dreamweaver added files\n' + \
-            ''###################\n' + \
+            '###################\n' + \
             '_notes\n' + \
             'dwsync.xml\n' + \
             '# Komodo\n' + \
-            ''###################\n' + \
+            '###################\n' + \
             '*.komodoproject\n' + \
             '.komodotools\n'
         ignorefile.write(ignore)
