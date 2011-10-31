@@ -256,7 +256,7 @@ def submit_pull_request(user, repo):
     auth = (settings.username, settings.password)
     url = 'https://api.github.com/repos/' + user + '/' + repo + '/pulls'
     params = {'title': 'Hi! I cleaned up your code for you!', 'body': 'Hi'
-            + ' there!\n\nThis is WhitespaceBot. I\'m an [open-source](https://github.com/Gunio/LightWrite) robot that'
+            + ' there!\n\nThis is WhitespaceBot. I\'m an [open-source](https://github.com/Gunio/WhitespaceBot) robot that'
             + ' removes trailing white space in your code, and gives you a gitignore file if you didn\'t have one! ' +
             ' \n\nWhy whitespace? Whitespace is an eyesore for developers who use text editors with dark themes. It\'s not ' +
             ' a huge deal, but it\'s a bit annoying if you use Vim in a terminal. Really, I\'m just a proof of ' +
